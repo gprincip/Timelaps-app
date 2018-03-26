@@ -22,6 +22,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -242,9 +243,6 @@ public class Camera2BasicFragment extends Fragment
 
     /**
      * This is the output file for our picture.
-     */
-//    private File mFile;
-    private List<File> fileList;
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
@@ -349,7 +347,6 @@ public class Camera2BasicFragment extends Fragment
         @Override
         public void run() {
             takePicture();
-            pictureNumber++;
         }
     };
 
@@ -368,6 +365,12 @@ public class Camera2BasicFragment extends Fragment
                 }
             });
         }
+    }
+
+    private void proceedAfterRecording(){
+        Intent intent = new Intent(getActivity(), ReportActivity.class);
+        intent.putExtra("numberOfPictures", pictureNumber);
+        startActivity(intent);
     }
 
     /**
@@ -781,6 +784,7 @@ public class Camera2BasicFragment extends Fragment
      */
     private void takePicture() {
         lockFocus();
+        pictureNumber++;
     }
 
     /**
@@ -850,7 +854,7 @@ public class Camera2BasicFragment extends Fragment
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
                     showToast("Picture saved: " + pictureNumber);
-                    Log.d(TAG, "Saved " + pictureNumber);
+
                     unlockFocus();
                 }
             };
@@ -932,6 +936,7 @@ public class Camera2BasicFragment extends Fragment
     private void stopRecording() {
         pictureService.shutdown();
         recording = false;
+        proceedAfterRecording();
     }
 
     private void startRecording() {
