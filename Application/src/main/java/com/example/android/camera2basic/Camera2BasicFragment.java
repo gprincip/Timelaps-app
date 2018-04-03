@@ -140,7 +140,7 @@ public class Camera2BasicFragment extends Fragment
     //Snimanje ukljuceno/iskljuceno
     private boolean recording = false;
 
-    private int pictureNumber;
+    private int pictureNumber = -1;
 
     private ScheduledExecutorService pictureService;
 
@@ -369,7 +369,7 @@ public class Camera2BasicFragment extends Fragment
 
     private void proceedAfterRecording(){
         Intent intent = new Intent(getActivity(), ReportActivity.class);
-        intent.putExtra("numberOfPictures", pictureNumber);
+        intent.putExtra("numberOfPictures", pictureNumber + 1);
         startActivity(intent);
     }
 
@@ -429,7 +429,7 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        pictureNumber = 0;
+        pictureNumber = -1;
 
 
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);

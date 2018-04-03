@@ -15,15 +15,19 @@ public class ImageAdapter extends BaseAdapter {
 
     private int mCount;
 
+    private String thumbnailsPaths[];
     private String filePaths[];
 
     public ImageAdapter(Context c, int mCount) {
         mContext = c;
         this.mCount = mCount;
+
         filePaths = new String[mCount];
+        thumbnailsPaths = new String[mCount];
 
         for(int i=0; i< mCount; ++i){
             filePaths[i] = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+".jpg";
+            thumbnailsPaths[i] = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+"_thumb.jpg";
         }
 
     }
@@ -36,7 +40,9 @@ public class ImageAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+
+        return filePaths[position];
+
     }
 
     @Override
@@ -57,9 +63,24 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-        Bitmap bm = BitmapFactory.decodeFile(filePaths[position]);
+       // byte imageData[];
 
-        imageView.setImageBitmap(bm);
+        try {
+
+            Bitmap bmThumbnail = BitmapFactory.decodeFile(thumbnailsPaths[position]);
+
+//            Bitmap bmThumbnail = Bitmap.createScaledBitmap(bm, bm.getWidth() / 10, bm.getHeight() / 10, false);
+
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+           // imageData = baos.toByteArray();
+
+            imageView.setImageBitmap(bmThumbnail);
+
+        } catch(Exception ex){
+
+        }
+
         return imageView;
     }
 

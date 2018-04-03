@@ -5,8 +5,11 @@ package com.example.android.camera2basic;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,19 +37,43 @@ public class ImageSaver implements Runnable {
         mContext = context;
     }
 
+    private byte[] createThumbnail(byte[] bytes)
+    {
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+        int width = bitmap.getWidth();
+
+        int ratio = width / 50;
+
+        Bitmap thumb = Bitmap.createScaledBitmap(bitmap, 50, bitmap.getHeight() / ratio, false);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        thumb.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+
+        return baos.toByteArray();
+    }
+
     @Override
     public void run() {
         ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
         byte[] bytes = new byte[buffer.remaining()];
         buffer.get(bytes);
         FileOutputStream output = null;
+
+        FileOutputStream thumbnailOutput = null;
+
         try {
             output = new FileOutputStream(new File(mContext.getExternalFilesDir(null), "picture" + mPictureNumber +".jpg"));
             output.write(bytes);
+
+            thumbnailOutput = new FileOutputStream(new File(mContext.getExternalFilesDir(null), "picture" + mPictureNumber +"_thumb.jpg"));
+            thumbnailOutput.write(createThumbnail(bytes));
+
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             mImage.close();
+
             if (null != output) {
                 try {
                     output.close();
@@ -54,6 +81,14 @@ public class ImageSaver implements Runnable {
                     e.printStackTrace();
                 }
             }
+            if (thumbnailOutput != null) {
+                try {
+                    thumbnailOutput.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
     }
 }
