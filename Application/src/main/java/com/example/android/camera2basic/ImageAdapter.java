@@ -9,18 +9,27 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ImageAdapter extends BaseAdapter {
 
     private Context mContext;
 
     private int mCount;
 
+    private ArrayList<Integer> selectedPositions;
+
     private String thumbnailsPaths[];
     private String filePaths[];
+
+    private ArrayList<Picture> pictures;
 
     public ImageAdapter(Context c, int mCount) {
         mContext = c;
         this.mCount = mCount;
+        selectedPositions = new ArrayList<Integer>();
+        pictures = new ArrayList<Picture>();
 
         filePaths = new String[mCount];
         thumbnailsPaths = new String[mCount];
@@ -28,10 +37,18 @@ public class ImageAdapter extends BaseAdapter {
         for(int i=0; i< mCount; ++i){
             filePaths[i] = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+".jpg";
             thumbnailsPaths[i] = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+"_thumb.jpg";
+
+            String filePath = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+".jpg";
+            String thumbnailPath = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+"_thumb.jpg";
+
+            pictures.add(new Picture(false, thumbnailPath, filePath));
         }
 
     }
 
+    public ArrayList<Integer> getSelectedPositions(){
+        return selectedPositions;
+    }
 
     @Override
     public int getCount() {
@@ -39,9 +56,9 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public Picture getItem(int position) {
 
-        return filePaths[position];
+        return pictures.get(position);
 
     }
 
@@ -67,7 +84,7 @@ public class ImageAdapter extends BaseAdapter {
 
         try {
 
-            Bitmap bmThumbnail = BitmapFactory.decodeFile(thumbnailsPaths[position]);
+            Bitmap bmThumbnail = BitmapFactory.decodeFile(getItem(position).getThumbnailPath());
 
 //            Bitmap bmThumbnail = Bitmap.createScaledBitmap(bm, bm.getWidth() / 10, bm.getHeight() / 10, false);
 

@@ -26,7 +26,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     private static final String FILE_TYPE = "image/*";
 
     private MediaScannerConnection conn;
-    private Adapter adapter = null;
+    private ImageAdapter adapter = null;
     GridView gridView = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         picturesTaken.setText(""+numberOfPicturesTaken);
 
         gridView = (GridView)findViewById(R.id.gridViewGallery);
-        gridView.setAdapter(new ImageAdapter(this, numberOfPicturesTaken));
+        adapter = new ImageAdapter(this, numberOfPicturesTaken);
+        gridView.setAdapter(adapter);
 
         registerForContextMenu(gridView);
 
@@ -48,11 +49,11 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                String filename = (String)parent.getAdapter().getItem(position);
+                Picture selectedPicture = (Picture) parent.getAdapter().getItem(position);
+                selectedPicture.setSelected(!selectedPicture.getSelected());
+                Log.i("TL", selectedPicture.getPath());
 
-                Log.i("TL", filename);
-
-                SCAN_PATH = filename;
+                SCAN_PATH = selectedPicture.getPath();
 
                 startScan();
             }
@@ -82,7 +83,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
         switch (item.getItemId()){
             case R.id.context_menu_report_activity_view :
-                String path = gridView.getAdapter().getItem(info.position).toString();
+                Picture selectedPicture = (Picture)gridView.getAdapter().getItem(info.position);
+                String path = selectedPicture.getPath();
                 SCAN_PATH = path;
                 startScan();
 
