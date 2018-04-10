@@ -17,6 +17,7 @@
 package com.example.android.camera2basic;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -40,7 +41,6 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,18 +58,15 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.Semaphore;
@@ -91,6 +88,8 @@ public class Camera2BasicFragment extends Fragment
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
+
+
 
     /**
      * Tag for the {@link Log}.
@@ -196,6 +195,9 @@ public class Camera2BasicFragment extends Fragment
     /**
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its state.
      */
+
+    private Button mBtnRecord;
+
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
         @Override
@@ -431,15 +433,15 @@ public class Camera2BasicFragment extends Fragment
                              Bundle savedInstanceState) {
         pictureNumber = -1;
 
-
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
     }
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
-        view.findViewById(R.id.picture).setOnClickListener(this);
+        view.findViewById(R.id.startRecording).setOnClickListener(this);
         view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
+        mBtnRecord = view.findViewById(R.id.startRecording);
     }
 
     @Override
@@ -853,7 +855,6 @@ public class Camera2BasicFragment extends Fragment
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session,
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
-                    showToast("Picture saved: " + pictureNumber);
 
                     unlockFocus();
                 }
@@ -905,7 +906,7 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.picture: {
+            case R.id.startRecording: {
                 //takePicture();
                 //Dugme za pocetak i kraj snimanja
                 recording = !recording;
@@ -937,11 +938,14 @@ public class Camera2BasicFragment extends Fragment
         pictureService.shutdown();
         recording = false;
         proceedAfterRecording();
+        mBtnRecord.setText(getString(R.string.startRecording));
     }
 
     private void startRecording() {
+        pictureNumber = -1;
         pictureService = Executors.newScheduledThreadPool(1);
         pictureService.scheduleWithFixedDelay(takePictureTask, 0, 3, TimeUnit.SECONDS);
+        mBtnRecord.setText(getString(R.string.stopRecording));
     }
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
