@@ -18,25 +18,16 @@ public class ImageAdapter extends BaseAdapter {
 
     private int mCount;
 
-    private ArrayList<Integer> selectedPositions;
-
-    private String thumbnailsPaths[];
-    private String filePaths[];
-
     private ArrayList<Picture> pictures;
 
     public ImageAdapter(Context c, int mCount) {
+
         mContext = c;
         this.mCount = mCount;
-        selectedPositions = new ArrayList<Integer>();
         pictures = new ArrayList<Picture>();
 
-        filePaths = new String[mCount];
-        thumbnailsPaths = new String[mCount];
 
         for(int i=0; i< mCount; ++i){
-            filePaths[i] = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+".jpg";
-            thumbnailsPaths[i] = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+"_thumb.jpg";
 
             String filePath = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+".jpg";
             String thumbnailPath = mContext.getExternalFilesDir(null).getPath()+"/picture"+i+"_thumb.jpg";
@@ -46,13 +37,17 @@ public class ImageAdapter extends BaseAdapter {
 
     }
 
-    public ArrayList<Integer> getSelectedPositions(){
-        return selectedPositions;
+    public void removePicture(long id){
+
+        pictures.remove(getItem((int)id));
+
     }
 
     @Override
     public int getCount() {
-        return mCount;
+
+        return pictures.size();
+
     }
 
     @Override
@@ -94,6 +89,7 @@ public class ImageAdapter extends BaseAdapter {
 
             imageView.setImageBitmap(bmThumbnail);
 
+
         } catch(Exception ex){
 
         }
@@ -102,4 +98,11 @@ public class ImageAdapter extends BaseAdapter {
     }
 
 
+    public void removePictures(ArrayList<Picture> toBeDeleted) {
+
+        for(int i=0; i<toBeDeleted.size(); i++){
+            pictures.remove(toBeDeleted.get(i));
+        }
+
+    }
 }
