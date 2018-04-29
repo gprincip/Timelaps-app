@@ -56,4 +56,11 @@
         android:text="@string/delete_selected_items"
         android:layout_margin="5dp"/>
 
+    <Button
+        android:id="@+id/savePhotos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/save_photos"
+        android:layout_margin="5dp"/>
+
 </LinearLayout>

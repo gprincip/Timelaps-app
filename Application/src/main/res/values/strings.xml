@@ -20,4 +20,6 @@
     <string name="request_permission">This sample needs camera permission.</string>
     <string name="camera_error">This device doesn\'t support Camera2 API.</string>
     <string name="delete_selected_items">DELETE SELECTED ITEMS</string>
+    <string name="save_photos">SAVE PHOTOS</string>
+    <string name="openGallery">Open gallery</string>
 </resources>

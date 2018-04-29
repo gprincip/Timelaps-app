@@ -62,6 +62,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,6 +82,7 @@ public class Camera2BasicFragment extends Fragment
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
+    public static final String THIS_ACTIVITY = "Camera2BasicFragment";
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -88,7 +90,6 @@ public class Camera2BasicFragment extends Fragment
         ORIENTATIONS.append(Surface.ROTATION_180, 270);
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
-
 
 
     /**
@@ -197,6 +198,7 @@ public class Camera2BasicFragment extends Fragment
      */
 
     private Button mBtnRecord;
+    private Button mBtnOpenGallery;
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
@@ -245,8 +247,8 @@ public class Camera2BasicFragment extends Fragment
 
     /**
      * This is the output file for our picture.
-
-    /**
+     * <p>
+     * /**
      * {@link CaptureRequest.Builder} for the camera preview
      */
     private CaptureRequest.Builder mPreviewRequestBuilder;
@@ -369,9 +371,10 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
-    private void proceedAfterRecording(){
+    private void proceedAfterRecording() {
         Intent intent = new Intent(getActivity(), ReportActivity.class);
         intent.putExtra("numberOfPictures", pictureNumber + 1);
+        intent.putExtra("activityName", THIS_ACTIVITY);
         startActivity(intent);
     }
 
@@ -392,7 +395,7 @@ public class Camera2BasicFragment extends Fragment
      * @return The optimal {@code Size}, or an arbitrary one if none were big enough
      */
     private static Size chooseOptimalSize(Size[] choices, int textureViewWidth,
-            int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
+                                          int textureViewHeight, int maxWidth, int maxHeight, Size aspectRatio) {
 
         // Collect the supported resolutions that are at least as big as the preview Surface
         List<Size> bigEnough = new ArrayList<>();
@@ -404,7 +407,7 @@ public class Camera2BasicFragment extends Fragment
             if (option.getWidth() <= maxWidth && option.getHeight() <= maxHeight &&
                     option.getHeight() == option.getWidth() * h / w) {
                 if (option.getWidth() >= textureViewWidth &&
-                    option.getHeight() >= textureViewHeight) {
+                        option.getHeight() >= textureViewHeight) {
                     bigEnough.add(option);
                 } else {
                     notBigEnough.add(option);
@@ -439,9 +442,23 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.startRecording).setOnClickListener(this);
-        view.findViewById(R.id.info).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         mBtnRecord = view.findViewById(R.id.startRecording);
+        mBtnOpenGallery = view.findViewById(R.id.openGallery);
+
+        mBtnOpenGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openGallery();
+            }
+        });
+    }
+
+    private void openGallery() {
+
+        Intent intent = new Intent(getActivity(), GalleryActivity.class);
+        startActivity(intent);
+
     }
 
     @Override
@@ -913,8 +930,7 @@ public class Camera2BasicFragment extends Fragment
 
                 if (recording) {
                     startRecording();
-                }
-                else {
+                } else {
                     stopRecording();
                 }
 
@@ -944,8 +960,16 @@ public class Camera2BasicFragment extends Fragment
     private void startRecording() {
         pictureNumber = -1;
         pictureService = Executors.newScheduledThreadPool(1);
-        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 500, TimeUnit.MILLISECONDS);
+        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 1500, TimeUnit.MILLISECONDS);
         mBtnRecord.setText(getString(R.string.stopRecording));
+
+
+        File files[] = getContext().getExternalFilesDir(null).listFiles();
+
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].getPath().endsWith(".jpg"))
+                files[i].delete();
+        }
     }
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
