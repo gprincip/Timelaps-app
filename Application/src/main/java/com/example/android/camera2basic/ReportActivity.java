@@ -87,9 +87,13 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
                 adapter.getItem(position).setSelected(!adapter.getItem(position).getSelected());
 
-                if (adapter.getItem(position).getSelected())
+                if (adapter.getItem(position).getSelected()) {
                     gridView.getChildAt(position).setBackgroundColor(Color.BLACK);
-                else gridView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
+                else{
+                    gridView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+
+                }
 
 
                 if (someItemIsSelected()) deleteSelectedItemsButton.setVisibility(View.VISIBLE);
@@ -172,9 +176,14 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
                     if (files[i].isFile() && files[i].getPath().endsWith(".jpg")) {
 
+                        Picture p = adapter.getPicture(files[i].getPath());
+
                         String newPath = storageLocationPath + "/" + files[i].getName();
                         files[i].renameTo(new File(newPath));
 
+                        if(p != null){
+                            p.setPath(newPath);
+                        }
                     }
 
                 }

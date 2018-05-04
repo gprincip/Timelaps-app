@@ -1,5 +1,7 @@
 package com.example.android.camera2basic;
 
+import java.io.File;
+
 /**
  * Created by student on 4/10/2018.
  */
@@ -41,4 +43,12 @@ public class Picture {
     public void setPath(String path) {
         this.path = path;
     }
+
+    public void delete(){
+        File image = new File(path);
+        File imageThumbnail = new File(thumbnailPath);
+        image.delete();
+        imageThumbnail.delete();
+    }
+
 }
