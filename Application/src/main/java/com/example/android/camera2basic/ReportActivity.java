@@ -45,6 +45,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     TextView picturesTaken = null;
     Button deleteSelectedItemsButton = null;
     Button savePhotosButton = null;
+    TextView galleryNameTextView = null;
     private String saveFolderName;
 
     @Override
@@ -63,21 +64,25 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         gridView = (GridView) findViewById(R.id.gridViewGallery);
         deleteSelectedItemsButton = findViewById(R.id.deleteSelectedItemsButton);
         savePhotosButton = findViewById(R.id.savePhotos);
+        galleryNameTextView = findViewById(R.id.galleryNameTextView);
 
         /********************************************/
 
         deleteSelectedItemsButton.setVisibility(View.INVISIBLE);
 
+        String galleryName = "Untitled";
+
         if (callingActivity.compareTo(Camera2BasicFragment.THIS_ACTIVITY) == 0)
             adapter = new ImageAdapter(this, numberOfPicturesTaken);
         else if (callingActivity.compareTo(GalleryActivity.THIS_ACTIVITY) == 0) {
-            String galleryName = intent.getStringExtra("galleryName");
+            galleryName = intent.getStringExtra("galleryName");
             adapter = new ImageAdapter(this, galleryName);
-
         }
         gridView.setAdapter(adapter);
 
         picturesTaken.setText("" + adapter.getCount());
+
+        galleryNameTextView.setText("Gallery name: "+galleryName);
 
         registerForContextMenu(gridView);
 
@@ -155,7 +160,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     private void savePhotos() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Enter folder name");
+        builder.setTitle("Enter gallery name");
 
 
         final EditText editText = new EditText(this);
@@ -190,6 +195,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
                 Toast.makeText(getApplicationContext(), "Photos saved at: " + storageLocationPath, Toast.LENGTH_SHORT).show();
 
+                galleryNameTextView.setText(editText.getText().toString());
 
             }
         });

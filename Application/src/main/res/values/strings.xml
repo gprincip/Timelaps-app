@@ -22,4 +22,5 @@
     <string name="delete_selected_items">DELETE SELECTED ITEMS</string>
     <string name="save_photos">SAVE PHOTOS</string>
     <string name="openGallery">Open gallery</string>
+    <string name="delete_selected_galleries">Delete selected galleries</string>
 </resources>
