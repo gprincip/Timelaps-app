@@ -195,7 +195,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
                 Toast.makeText(getApplicationContext(), "Photos saved at: " + storageLocationPath, Toast.LENGTH_SHORT).show();
 
-                galleryNameTextView.setText(editText.getText().toString());
+                galleryNameTextView.setText("Gallery name: " + editText.getText().toString());
 
             }
         });
