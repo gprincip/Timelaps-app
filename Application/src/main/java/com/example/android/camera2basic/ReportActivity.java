@@ -1,15 +1,10 @@
 package com.example.android.camera2basic;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,13 +14,10 @@ import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -171,8 +163,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                File fileDirs[] = getExternalFilesDirs(null);
-                File[] files = fileDirs[0].listFiles();
+                //File fileDirs[] = getExternalFilesDirs(null);
+                File[] files = getExternalFilesDir(null).listFiles();
                 File storageLocationPath =
                         new File(getExternalFilesDir(null).getPath() + "/" + editText.getText().toString());
                 storageLocationPath.mkdirs();
