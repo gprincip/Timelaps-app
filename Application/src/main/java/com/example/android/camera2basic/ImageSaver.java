@@ -45,7 +45,7 @@ public class ImageSaver implements Runnable {
 
         int ratio = width / 50;
 
-        Bitmap thumb = Bitmap.createScaledBitmap(bitmap, 50, bitmap.getHeight() / ratio, false);
+        Bitmap thumb = Bitmap.createScaledBitmap(bitmap, 50, bitmap.getHeight() / ratio + 1, false);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         thumb.compress(Bitmap.CompressFormat.JPEG, 60, baos);

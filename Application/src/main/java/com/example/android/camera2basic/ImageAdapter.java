@@ -142,4 +142,8 @@ public class ImageAdapter extends BaseAdapter {
         return null;
     }
 
+    public ArrayList<Picture> getListOfPictures(){
+        return pictures;
+    }
+
 }

@@ -1,11 +1,14 @@
 package com.example.android.camera2basic;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import org.jcodec.api.android.AndroidSequenceEncoder;
+import org.jcodec.common.io.FileChannelWrapper;
 import org.jcodec.common.io.NIOUtils;
 import org.jcodec.common.model.Rational;
 
@@ -21,29 +24,29 @@ import java.util.List;
 
 public class VideoMaker {
 
-    private List<Bitmap> bitmaps;
+    private List<Picture> pictures;
 
     private Context context;
 
-    public VideoMaker(Context context){
+    public VideoMaker(Context context, List<Picture> pictures){
         this.context = context;
-        bitmaps = new ArrayList<Bitmap>();
+        this.pictures = pictures;
     }
 
     public VideoMaker(){
-        bitmaps = new ArrayList<Bitmap>();
+        pictures = new ArrayList<>();
     }
 
-    public void addBitmap(Bitmap b){
-        bitmaps.add(b);
+    public void addPicture(Picture p){
+        pictures.add(p);
     }
 
-    public List<Bitmap> getBitmaps(){
-        return bitmaps;
+    public List<Picture> getPictures(){
+        return pictures;
     }
 
-    public Bitmap getBitmap(int i){
-        return bitmaps.get(i);
+    public Picture getPicture(int i){
+        return pictures.get(i);
     }
 
     public void setContext(Context c){
@@ -57,18 +60,20 @@ public class VideoMaker {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void makeVideo() throws IOException {
 
-        SeekableByteChannel out = null;
+        FileChannelWrapper out = null;
         try {
             String path = context.getExternalFilesDir(null).getPath().toString();
             Boolean makePath = new File(path + "/videos").mkdirs();
-            out = (SeekableByteChannel) NIOUtils.writableFileChannel(path + "/videos/output.mp4");
+            out = NIOUtils.writableFileChannel(path + "/videos/output.mp4");
             // for Android use: AndroidSequenceEncoder
-            AndroidSequenceEncoder encoder = new AndroidSequenceEncoder((org.jcodec.common.io.SeekableByteChannel) out, Rational.R(25, 1));
+            AndroidSequenceEncoder encoder = new AndroidSequenceEncoder(
+                    (org.jcodec.common.io.SeekableByteChannel) out, Rational.R(25, 1));
 
-            for (Bitmap b : bitmaps) {
+            for (Picture p : pictures) {
                 // Generate the image, for Android use Bitmap
                 //BufferedImage image = ...;
                 // Encode the image
+            Bitmap b = BitmapFactory.decodeFile(p.getThumbnailPath());
                 encoder.encodeImage(b);
             }
             // Finalize the encoding, i.e. clear the buffers, write the header, etc.
