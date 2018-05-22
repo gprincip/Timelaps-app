@@ -4,10 +4,13 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +48,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     TextView galleryNameTextView = null;
     private String saveFolderName;
 
+    private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +67,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         deleteSelectedItemsButton = findViewById(R.id.deleteSelectedItemsButton);
         savePhotosButton = findViewById(R.id.savePhotos);
         galleryNameTextView = findViewById(R.id.galleryNameTextView);
+
+        progressBar = findViewById(R.id.progress);
 
         /********************************************/
 
@@ -207,13 +215,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
         builder.show();
 
-        VideoMaker vm = new VideoMaker(getApplicationContext(),adapter.getListOfPictures());
-        try {
-            vm.makeVideo();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        final CreateVideoTask task = new CreateVideoTask();
+        task.execute(adapter.getListOfPictures().toArray(new Picture[0]));
     }
 
     @Override
@@ -301,4 +304,52 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             conn = null;
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public class CreateVideoTask extends AsyncTask<Picture, Integer, Void> {
+
+        public static final String TAG = "SNIMANJE";
+        private int totalPictures;
+
+        @Override
+        protected Void doInBackground(Picture... pictures) {
+
+            totalPictures = pictures.length;
+
+            VideoMaker vm = new VideoMaker(getApplicationContext(), pictures);
+            try {
+                vm.makeVideo(this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        public void doPublishProgres(int done) {
+            Log.i(TAG, "Publishing progres: " + String.valueOf(done) + " of " + totalPictures);
+            publishProgress(done);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setMax(totalPictures);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            int done = values[0];
+
+            Log.i(TAG, "Done " + String.valueOf(done) + " of " + totalPictures);
+            progressBar.setProgress(done);
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Log.i(TAG, "Finished.");
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
+
 }

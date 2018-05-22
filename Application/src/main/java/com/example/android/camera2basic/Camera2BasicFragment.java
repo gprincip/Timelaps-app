@@ -960,7 +960,7 @@ public class Camera2BasicFragment extends Fragment
     private void startRecording() {
         pictureNumber = -1;
         pictureService = Executors.newScheduledThreadPool(1);
-        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 1500, TimeUnit.MILLISECONDS);
+        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 2500, TimeUnit.MILLISECONDS);
         mBtnRecord.setText(getString(R.string.stopRecording));
 
 

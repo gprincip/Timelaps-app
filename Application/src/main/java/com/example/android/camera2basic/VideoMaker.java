@@ -24,41 +24,16 @@ import java.util.List;
 
 public class VideoMaker {
 
-    private List<Picture> pictures;
+    private final Picture[] pictures;
+    private final Context context;
 
-    private Context context;
-
-    public VideoMaker(Context context, List<Picture> pictures){
+    public VideoMaker(Context context, Picture[] pictures){
         this.context = context;
         this.pictures = pictures;
     }
 
-    public VideoMaker(){
-        pictures = new ArrayList<>();
-    }
-
-    public void addPicture(Picture p){
-        pictures.add(p);
-    }
-
-    public List<Picture> getPictures(){
-        return pictures;
-    }
-
-    public Picture getPicture(int i){
-        return pictures.get(i);
-    }
-
-    public void setContext(Context c){
-        this.context = c;
-    }
-
-    public Context getContext(){
-        return context;
-    }
-
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void makeVideo() throws IOException {
+    public void makeVideo(ReportActivity.CreateVideoTask createVideoTask) throws IOException {
 
         FileChannelWrapper out = null;
         try {
@@ -69,12 +44,14 @@ public class VideoMaker {
             AndroidSequenceEncoder encoder = new AndroidSequenceEncoder(
                     (org.jcodec.common.io.SeekableByteChannel) out, Rational.R(25, 1));
 
+            int cnt = 0;
             for (Picture p : pictures) {
                 // Generate the image, for Android use Bitmap
                 //BufferedImage image = ...;
                 // Encode the image
-            Bitmap b = BitmapFactory.decodeFile(p.getThumbnailPath());
+                Bitmap b = BitmapFactory.decodeFile(p.getPath());
                 encoder.encodeImage(b);
+                createVideoTask.doPublishProgres(++cnt);
             }
             // Finalize the encoding, i.e. clear the buffers, write the header, etc.
             encoder.finish();

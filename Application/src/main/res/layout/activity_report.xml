@@ -71,4 +71,11 @@
         android:text="@string/save_photos"
         android:layout_margin="5dp"/>
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:visibility="invisible"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

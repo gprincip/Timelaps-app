@@ -37,6 +37,22 @@ public class ImageSaver implements Runnable {
         mContext = context;
     }
 
+    private byte[] createImageForVideo(byte[] bytes){
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+        int width = bitmap.getWidth();
+
+        int ratio = width / 50;
+
+        Bitmap resizedBitmap = getResizedBitmap(bitmap, 350);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+
+        return baos.toByteArray();
+    }
+
     private byte[] createThumbnail(byte[] bytes)
     {
         Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
@@ -53,6 +69,21 @@ public class ImageSaver implements Runnable {
         return baos.toByteArray();
     }
 
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();  // image.getHeight()
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
     @Override
     public void run() {
         ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
@@ -64,7 +95,7 @@ public class ImageSaver implements Runnable {
 
         try {
             output = new FileOutputStream(new File(mContext.getExternalFilesDir(null), "picture" + mPictureNumber +".jpg"));
-            output.write(bytes);
+            output.write(createImageForVideo(bytes));
 
             thumbnailOutput = new FileOutputStream(new File(mContext.getExternalFilesDir(null), "picture" + mPictureNumber +"_thumb.jpg"));
             thumbnailOutput.write(createThumbnail(bytes));
