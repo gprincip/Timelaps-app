@@ -45,7 +45,9 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     TextView picturesTaken = null;
     Button deleteSelectedItemsButton = null;
     Button savePhotosButton = null;
+    Button makeVideoButton = null;
     TextView galleryNameTextView = null;
+    TextView progressInfoTextView = null;
     private String saveFolderName;
 
     private ProgressBar progressBar;
@@ -67,8 +69,9 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         deleteSelectedItemsButton = findViewById(R.id.deleteSelectedItemsButton);
         savePhotosButton = findViewById(R.id.savePhotos);
         galleryNameTextView = findViewById(R.id.galleryNameTextView);
-
+        progressInfoTextView = findViewById(R.id.progressInfoTextView);
         progressBar = findViewById(R.id.progress);
+        makeVideoButton = findViewById(R.id.makeVideo);
 
         /********************************************/
 
@@ -141,6 +144,15 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
                 }
             });
         }
+
+        makeVideoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final CreateVideoTask task = new CreateVideoTask();
+                task.execute(adapter.getListOfPictures().toArray(new Picture[0]));
+            }
+        });
+
     }
 
     private void deletePictures(ArrayList<Picture> toBeDeleted) {
@@ -214,10 +226,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         });
 
         builder.show();
-
-        final CreateVideoTask task = new CreateVideoTask();
-        task.execute(adapter.getListOfPictures().toArray(new Picture[0]));
     }
+
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -327,14 +337,15 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         }
 
         public void doPublishProgres(int done) {
-            Log.i(TAG, "Publishing progres: " + String.valueOf(done) + " of " + totalPictures);
+            if(done == 1)
+                progressBar.setMax(totalPictures);
             publishProgress(done);
         }
 
         @Override
         protected void onPreExecute() {
-            progressBar.setMax(totalPictures);
             progressBar.setVisibility(View.VISIBLE);
+            progressInfoTextView.setText(0+"% done");
         }
 
         @Override
@@ -342,13 +353,21 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             int done = values[0];
 
             Log.i(TAG, "Done " + String.valueOf(done) + " of " + totalPictures);
+            int percentage = (int)(((double)done / (double)totalPictures)*100);
+            progressInfoTextView.setText(percentage+"% done");
+
             progressBar.setProgress(done);
+
+            if(done == totalPictures)
+            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             Log.i(TAG, "Finished.");
             progressBar.setVisibility(View.INVISIBLE);
+            progressInfoTextView.setVisibility(View.INVISIBLE);
         }
     }
 

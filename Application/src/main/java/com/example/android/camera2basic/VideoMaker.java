@@ -47,7 +47,7 @@ public class VideoMaker {
             int cnt = 0;
             for (Picture p : pictures) {
                 // Generate the image, for Android use Bitmap
-                //BufferedImage image = ...;
+                // BufferedImage image = ...;
                 // Encode the image
                 Bitmap b = BitmapFactory.decodeFile(p.getPath());
                 encoder.encodeImage(b);
