@@ -48,7 +48,6 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     Button makeVideoButton = null;
     TextView galleryNameTextView = null;
     TextView progressInfoTextView = null;
-    private String saveFolderName;
 
     private ProgressBar progressBar;
 
@@ -315,6 +314,24 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         }
     }
 
+    @Override
+    public void onBackPressed() {
+
+        //TODO da li si siguran da hoces da obrises slike
+
+        File files[] = getApplicationContext().getExternalFilesDir(null).listFiles();
+
+        for(int i=0; i<files.length; i++){
+
+            if(files[i].isFile()){
+                files[i].delete();
+            }
+
+        }
+
+        super.onBackPressed();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public class CreateVideoTask extends AsyncTask<Picture, Integer, Void> {
 
@@ -336,7 +353,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             return null;
         }
 
-        public void doPublishProgres(int done) {
+        public void doPublishProgress(int done) {
             if(done == 1)
                 progressBar.setMax(totalPictures);
             publishProgress(done);

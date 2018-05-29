@@ -1,11 +1,11 @@
 package com.example.android.camera2basic;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import org.jcodec.api.android.AndroidSequenceEncoder;
 import org.jcodec.common.io.FileChannelWrapper;
@@ -14,9 +14,6 @@ import org.jcodec.common.model.Rational;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.channels.SeekableByteChannel;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by student on 5/15/2018.
@@ -51,7 +48,7 @@ public class VideoMaker {
                 // Encode the image
                 Bitmap b = BitmapFactory.decodeFile(p.getPath());
                 encoder.encodeImage(b);
-                createVideoTask.doPublishProgres(++cnt);
+                createVideoTask.doPublishProgress(++cnt);
             }
             // Finalize the encoding, i.e. clear the buffers, write the header, etc.
             encoder.finish();

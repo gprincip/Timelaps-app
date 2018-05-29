@@ -16,8 +16,6 @@
 
 <resources>
 
-    <!-- Activity themes -->
-
     <style name="Theme.Base" parent="android:Theme.Light" />
 
     <style name="Theme.Sample" parent="Theme.Base" />
@@ -38,5 +36,6 @@
         <item name="android:shadowDy">-3.5</item>
         <item name="android:shadowRadius">2</item>
     </style>
+
 
 </resources>

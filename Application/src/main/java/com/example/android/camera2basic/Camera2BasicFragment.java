@@ -375,7 +375,8 @@ public class Camera2BasicFragment extends Fragment
         Intent intent = new Intent(getActivity(), ReportActivity.class);
         intent.putExtra("numberOfPictures", pictureNumber + 1);
         intent.putExtra("activityName", THIS_ACTIVITY);
-        startActivity(intent);
+        if(pictureNumber + 1 > 0) startActivity(intent);
+        else showToast("No pictures were taken");
     }
 
     /**
@@ -437,6 +438,7 @@ public class Camera2BasicFragment extends Fragment
         pictureNumber = -1;
 
         return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
+
     }
 
     @Override
@@ -455,10 +457,18 @@ public class Camera2BasicFragment extends Fragment
     }
 
     private void openGallery() {
+    //Check if gallery folder is empty, if it is don't start activity
 
-        Intent intent = new Intent(getActivity(), GalleryActivity.class);
-        startActivity(intent);
+        File[] files = getActivity().getApplicationContext().getExternalFilesDir(null).listFiles();
 
+        for(int i=0; i<files.length; i++) {
+            if (files[i].getPath().toString().endsWith(".jpg")) {
+                Intent intent = new Intent(getActivity(), GalleryActivity.class);
+                startActivity(intent);
+                return;
+            }
+        }
+           showToast("Gallery is empty");
     }
 
     @Override
