@@ -138,9 +138,10 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             }
         });
 
-        if(callingActivity.compareTo(GalleryActivity.THIS_ACTIVITY) == 0)
+        if(callingActivity.compareTo(GalleryActivity.THIS_ACTIVITY) == 0) {
             savePhotosButton.setVisibility(View.INVISIBLE);
-        else {
+            picturesSaved = true;
+        } else {
             savePhotosButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -152,6 +153,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         makeVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                picturesSaved = true;
                 final CreateVideoTask task = new CreateVideoTask();
                 task.execute(adapter.getListOfPictures().toArray(new Picture[0]));
             }

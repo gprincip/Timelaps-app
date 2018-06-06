@@ -371,9 +371,22 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
+    private int getNumberOfPictures(){
+
+        int num = 0;
+
+        File files[] = getActivity().getApplicationContext().getExternalFilesDir(null)
+                .listFiles();
+
+        for(int i=0; i<files.length; i++)
+            if(files[i].isFile() && !files[i].getPath().endsWith("thumb.jpg")) num++;
+
+        return num;
+    }
+
     private void proceedAfterRecording() {
         Intent intent = new Intent(getActivity(), ReportActivity.class);
-        intent.putExtra("numberOfPictures", pictureNumber+1);
+        intent.putExtra("numberOfPictures", getNumberOfPictures());
         intent.putExtra("activityName", THIS_ACTIVITY);
         if(pictureNumber > 0) startActivity(intent);
         else showToast("No pictures were taken");
@@ -457,6 +470,15 @@ public class Camera2BasicFragment extends Fragment
                 openGallery();
             }
         });
+
+        //Delete all files in the root folder
+
+        File files[] = getContext().getExternalFilesDir(null).listFiles();
+
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].getPath().endsWith(".jpg"))
+                files[i].delete();
+        }
 
     }
 
@@ -967,13 +989,6 @@ public class Camera2BasicFragment extends Fragment
         pictureService.scheduleWithFixedDelay(takePictureTask, 0, 500, TimeUnit.MILLISECONDS);
         mBtnRecord.setText(getString(R.string.stopRecording));
 
-
-        File files[] = getContext().getExternalFilesDir(null).listFiles();
-
-        for (int i = 0; i < files.length; i++) {
-            if (files[i].getPath().endsWith(".jpg"))
-                files[i].delete();
-        }
     }
 
     private void setAutoFlash(CaptureRequest.Builder requestBuilder) {
