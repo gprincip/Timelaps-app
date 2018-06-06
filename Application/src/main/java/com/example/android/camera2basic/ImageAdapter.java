@@ -125,8 +125,6 @@ public class ImageAdapter extends BaseAdapter {
 
     public void removePictures(ArrayList<Picture> toBeDeleted) {
 
-        File files[] = mContext.getExternalFilesDir(null).listFiles();
-
         for (int i = 0; i < toBeDeleted.size(); i++) {
             toBeDeleted.get(i).delete();
             pictures.remove(toBeDeleted.get(i));

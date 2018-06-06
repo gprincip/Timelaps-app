@@ -40,6 +40,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     private MediaScannerConnection conn;
     private ImageAdapter adapter = null;
     int numberOfPicturesTaken = -1;
+    boolean picturesSaved = false;
 
     GridView gridView = null;
     TextView picturesTaken = null;
@@ -55,6 +56,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
+
+        picturesSaved = false;
 
         Intent intent = getIntent();
 
@@ -125,6 +128,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
                         toBeDeleted.add(adapter.getItem(i));
                 }
 
+
+                //Slika se obrise sa telefona, ali i dalje u gridview-u prikazuje sliku
                 deletePictures(toBeDeleted);
                 picturesTaken.setText("" + (adapter.getCount()));
                 updateSelections();
@@ -215,6 +220,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
                 galleryNameTextView.setText("Gallery name: " + editText.getText().toString());
 
+                picturesSaved = true;
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -317,19 +323,36 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
     @Override
     public void onBackPressed() {
 
-        //TODO da li si siguran da hoces da obrises slike
+        if (!picturesSaved) {
 
-        File files[] = getApplicationContext().getExternalFilesDir(null).listFiles();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Discard taken photos?");
 
-        for(int i=0; i<files.length; i++){
+            builder.setPositiveButton("Discard", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-            if(files[i].isFile()){
-                files[i].delete();
-            }
+                    File files[] = getApplicationContext().getExternalFilesDir(null).listFiles();
 
-        }
+                    for (int i = 0; i < files.length; i++) {
+                        if (files[i].isFile()) {
+                            files[i].delete();
+                        }
+                    }
+                    ReportActivity.super.onBackPressed();
+                }
+            });
 
-        super.onBackPressed();
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //Do nothing
+                }
+            });
+
+            builder.show();
+
+        } else ReportActivity.super.onBackPressed();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)

@@ -373,9 +373,9 @@ public class Camera2BasicFragment extends Fragment
 
     private void proceedAfterRecording() {
         Intent intent = new Intent(getActivity(), ReportActivity.class);
-        intent.putExtra("numberOfPictures", pictureNumber + 1);
+        intent.putExtra("numberOfPictures", pictureNumber+1);
         intent.putExtra("activityName", THIS_ACTIVITY);
-        if(pictureNumber + 1 > 0) startActivity(intent);
+        if(pictureNumber > 0) startActivity(intent);
         else showToast("No pictures were taken");
     }
 
@@ -448,12 +448,16 @@ public class Camera2BasicFragment extends Fragment
         mBtnRecord = view.findViewById(R.id.startRecording);
         mBtnOpenGallery = view.findViewById(R.id.openGallery);
 
-        mBtnOpenGallery.setOnClickListener(new View.OnClickListener() {
+        //Preventing null pointer exception
+        if(mBtnOpenGallery == null) mBtnOpenGallery = view.findViewById(R.id.openGallery);
+
+            mBtnOpenGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openGallery();
             }
         });
+
     }
 
     private void openGallery() {
@@ -462,7 +466,7 @@ public class Camera2BasicFragment extends Fragment
         File[] files = getActivity().getApplicationContext().getExternalFilesDir(null).listFiles();
 
         for(int i=0; i<files.length; i++) {
-            if (files[i].getPath().toString().endsWith(".jpg")) {
+            if (files[i].isDirectory() && files[i].getName() != "videos") {
                 Intent intent = new Intent(getActivity(), GalleryActivity.class);
                 startActivity(intent);
                 return;
@@ -813,7 +817,7 @@ public class Camera2BasicFragment extends Fragment
      */
     private void takePicture() {
         lockFocus();
-        pictureNumber++;
+        //pictureNumber++;
     }
 
     /**
@@ -828,6 +832,7 @@ public class Camera2BasicFragment extends Fragment
             mState = STATE_WAITING_LOCK;
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback,
                     mBackgroundHandler);
+
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -915,6 +920,7 @@ public class Camera2BasicFragment extends Fragment
      */
     private void unlockFocus() {
         try {
+            pictureNumber++;
             // Reset the auto-focus trigger
             mPreviewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
                     CameraMetadata.CONTROL_AF_TRIGGER_CANCEL);
@@ -934,10 +940,7 @@ public class Camera2BasicFragment extends Fragment
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.startRecording: {
-                //takePicture();
-                //Dugme za pocetak i kraj snimanja
                 recording = !recording;
-
                 if (recording) {
                     startRecording();
                 } else {
@@ -947,16 +950,7 @@ public class Camera2BasicFragment extends Fragment
 
                 break;
             }
-            case R.id.info: {
-                Activity activity = getActivity();
-                if (null != activity) {
-                    new AlertDialog.Builder(activity)
-                            .setMessage(R.string.intro_message)
-                            .setPositiveButton(android.R.string.ok, null)
-                            .show();
-                }
-                break;
-            }
+
         }
     }
 
@@ -968,9 +962,9 @@ public class Camera2BasicFragment extends Fragment
     }
 
     private void startRecording() {
-        pictureNumber = -1;
+        pictureNumber = 0;
         pictureService = Executors.newScheduledThreadPool(1);
-        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 2500, TimeUnit.MILLISECONDS);
+        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 500, TimeUnit.MILLISECONDS);
         mBtnRecord.setText(getString(R.string.stopRecording));
 
 
