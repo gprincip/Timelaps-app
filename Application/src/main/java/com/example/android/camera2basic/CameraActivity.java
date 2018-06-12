@@ -16,10 +16,19 @@
 
 package com.example.android.camera2basic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 public class CameraActivity extends AppCompatActivity {
+
+    public static int shootingInterval = -1;
+    public static int videoDuration = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,4 +42,27 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch(item.getItemId()){
+            case R.id.main_menu_settings : openSettingsActivity(); break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void openSettingsActivity(){
+
+        Intent intent = new Intent(this,SettingsActivity.class);
+        startActivity(intent);
+
+    }
 }

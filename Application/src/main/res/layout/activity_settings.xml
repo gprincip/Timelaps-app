@@ -1,0 +1,150 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:orientation="vertical">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
+    
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Take pictures every"/>
+
+    <RadioGroup
+        android:id="@+id/settings_activity_radio_group_framerate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_1sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 second"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_1.5sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1.5 second"
+            android:checked="true"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_2sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 second"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_3sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3 second"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_5sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 second"/>
+
+    </RadioGroup>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Custom (in seconds) : "/>
+
+     <EditText
+         android:id="@+id/settings_activity_editText_custom_interval"
+         android:layout_width="100dp"
+         android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Video duration: "/>
+
+    <RadioGroup
+        android:id="@+id/settings_activity_radio_group_videoDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_10sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 seconds"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_30sec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30 seconds"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_1min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1 minute"/>
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_2min"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2 minutes"/>
+
+
+        <RadioButton
+            android:id="@+id/settings_activity_radio_button_disabled"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="disabled"
+            android:checked="true"/>
+
+    </RadioGroup>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Custom (in seconds)"/>
+
+        <EditText
+            android:id="@+id/settings_activity_editText_custom_duration"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/settings_activity_buttonOk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_ok"/>
+
+
+
+</LinearLayout>

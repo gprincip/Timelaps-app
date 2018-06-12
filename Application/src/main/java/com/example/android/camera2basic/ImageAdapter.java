@@ -92,6 +92,8 @@ public class ImageAdapter extends BaseAdapter {
 
             imageView = new ImageView(mContext);
 
+        } else imageView = (ImageView)convertView;
+
             imageView.setLayoutParams(new GridView.LayoutParams(85, 85));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setPadding(8, 8, 8, 8);
@@ -111,11 +113,6 @@ public class ImageAdapter extends BaseAdapter {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-
-
-        } else {
-            imageView = (ImageView) convertView;
-        }
 
         // byte imageData[];
 

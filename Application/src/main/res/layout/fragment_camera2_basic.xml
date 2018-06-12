@@ -34,19 +34,20 @@
         android:layout_alignParentStart="true"
         android:background="@color/control_background">
 
-        <Button
+        <ImageButton
             android:id="@+id/startRecording"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|left"
-            android:text="@string/startRecording" />
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:src="@drawable/icon_record"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/openGallery"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|right"
-            android:text="@string/openGallery"/>
+            android:src="@drawable/icon_gallery"/>
 
     </FrameLayout>
 

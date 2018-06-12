@@ -39,7 +39,7 @@ android {
 
     buildToolsVersion "27.0.3"
 
-    configurations.all{
+    configurations.all {
         resolutionStrategy.force 'com.google.code.findbugs:jsr305:3.0.2'
     }
 

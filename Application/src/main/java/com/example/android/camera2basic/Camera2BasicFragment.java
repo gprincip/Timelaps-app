@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.graphics.Camera;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Point;
@@ -54,13 +55,17 @@ import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -137,12 +142,17 @@ public class Camera2BasicFragment extends Fragment
      * {@link TextureView}.
      */
 
-    //Snimanje ukljuceno/iskljuceno
+    //Recording on/off
     private boolean recording = false;
 
     private int pictureNumber = -1;
 
     private ScheduledExecutorService pictureService;
+
+    private int shootingInterval = 1500;
+
+    //If user limited the duration of video, calculate max no of pictures for 25fps
+    private int maxNumberOfPictures = -1;
 
     private final TextureView.SurfaceTextureListener mSurfaceTextureListener
             = new TextureView.SurfaceTextureListener() {
@@ -197,8 +207,8 @@ public class Camera2BasicFragment extends Fragment
      * {@link CameraDevice.StateCallback} is called when {@link CameraDevice} changes its state.
      */
 
-    private Button mBtnRecord;
-    private Button mBtnOpenGallery;
+    private ImageButton mBtnRecord;
+    private ImageButton mBtnOpenGallery;
 
     private final CameraDevice.StateCallback mStateCallback = new CameraDevice.StateCallback() {
 
@@ -350,6 +360,11 @@ public class Camera2BasicFragment extends Fragment
     private Runnable takePictureTask = new Runnable() {
         @Override
         public void run() {
+            if(maxNumberOfPictures != -1){
+                if(pictureNumber < maxNumberOfPictures)
+                    takePicture();
+                else stopRecording();
+            }else
             takePicture();
         }
     };
@@ -457,19 +472,27 @@ public class Camera2BasicFragment extends Fragment
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
         view.findViewById(R.id.startRecording).setOnClickListener(this);
+        setHasOptionsMenu(true);
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         mBtnRecord = view.findViewById(R.id.startRecording);
+        mBtnRecord.setBackgroundResource(0);
         mBtnOpenGallery = view.findViewById(R.id.openGallery);
 
-        //Preventing null pointer exception
-        if(mBtnOpenGallery == null) mBtnOpenGallery = view.findViewById(R.id.openGallery);
+        maxNumberOfPictures = -1;
 
-            mBtnOpenGallery.setOnClickListener(new View.OnClickListener() {
+        mBtnOpenGallery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openGallery();
             }
         });
+
+        if(CameraActivity.shootingInterval != -1) this.shootingInterval = CameraActivity.shootingInterval;
+
+        if(CameraActivity.videoDuration != -1){
+            //25fps is 40ms for every frame
+            maxNumberOfPictures = CameraActivity.videoDuration / 40;
+        }
 
         //Delete all files in the root folder
 
@@ -976,18 +999,21 @@ public class Camera2BasicFragment extends Fragment
         }
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
     private void stopRecording() {
         pictureService.shutdown();
         recording = false;
         proceedAfterRecording();
-        mBtnRecord.setText(getString(R.string.startRecording));
     }
 
     private void startRecording() {
         pictureNumber = 0;
         pictureService = Executors.newScheduledThreadPool(1);
-        pictureService.scheduleWithFixedDelay(takePictureTask, 0, 500, TimeUnit.MILLISECONDS);
-        mBtnRecord.setText(getString(R.string.stopRecording));
+        pictureService.scheduleWithFixedDelay(takePictureTask, 0, shootingInterval, TimeUnit.MILLISECONDS);
 
     }
 

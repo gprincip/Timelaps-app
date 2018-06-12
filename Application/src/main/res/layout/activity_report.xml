@@ -57,31 +57,43 @@
 
     </GridView>
 
-    <Button
-        android:id="@+id/deleteSelectedItemsButton"
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="5dp" />
+    
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_selected_items"
-        android:layout_margin="5dp"/>
+        android:text="Delete, save, or make video from pictures"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <Button
+        <ImageButton
+            android:id="@+id/deleteSelectedItemsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:src="@drawable/icon_delete"
+            android:backgroundTint="@color/control_background"/>
+
+        <ImageButton
             android:id="@+id/savePhotos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/save_photos"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:src="@drawable/icon_save"
+            android:backgroundTint="@color/control_background"/>
 
-        <Button
+        <ImageButton
             android:id="@+id/makeVideo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/make_video"
-            android:layout_margin="5dp"/>
+            android:layout_margin="5dp"
+            android:src="@drawable/icon_video"
+            android:backgroundTint="@color/control_background"/>
 
     </LinearLayout>
 

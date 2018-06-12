@@ -27,7 +27,7 @@ public class galleryListAdapter extends BaseAdapter {
         File files[] = mContext.getExternalFilesDir(null).listFiles();
 
         for (int i = 0; i < files.length; i++) {
-            if (files[i].isDirectory())
+            if (files[i].isDirectory() && files[i].getName().compareTo("videos") != 0)
                 items.add(files[i].getName());
         }
 

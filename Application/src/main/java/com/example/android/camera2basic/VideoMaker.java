@@ -24,19 +24,20 @@ public class VideoMaker {
     private final Picture[] pictures;
     private final Context context;
 
+
     public VideoMaker(Context context, Picture[] pictures){
         this.context = context;
         this.pictures = pictures;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void makeVideo(ReportActivity.CreateVideoTask createVideoTask) throws IOException {
+    public void makeVideo(ReportActivity.CreateVideoTask createVideoTask, String videoName) throws IOException {
 
         FileChannelWrapper out = null;
         try {
             String path = context.getExternalFilesDir(null).getPath().toString();
             Boolean makePath = new File(path + "/videos").mkdirs();
-            out = NIOUtils.writableFileChannel(path + "/videos/output.mp4");
+            out = NIOUtils.writableFileChannel(path + "/videos/"+videoName+".mp4");
             // for Android use: AndroidSequenceEncoder
             AndroidSequenceEncoder encoder = new AndroidSequenceEncoder(
                     (org.jcodec.common.io.SeekableByteChannel) out, Rational.R(25, 1));

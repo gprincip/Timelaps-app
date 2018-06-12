@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,9 +45,9 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
     GridView gridView = null;
     TextView picturesTaken = null;
-    Button deleteSelectedItemsButton = null;
-    Button savePhotosButton = null;
-    Button makeVideoButton = null;
+    ImageButton deleteSelectedItemsButton = null;
+    ImageButton savePhotosButton = null;
+    ImageButton makeVideoButton = null;
     TextView galleryNameTextView = null;
     TextView progressInfoTextView = null;
 
@@ -86,12 +87,13 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         else if (callingActivity.compareTo(GalleryActivity.THIS_ACTIVITY) == 0) {
             galleryName = intent.getStringExtra("galleryName");
             adapter = new ImageAdapter(this, galleryName);
+            picturesSaved = true;
         }
         gridView.setAdapter(adapter);
 
         picturesTaken.setText("" + adapter.getCount());
 
-        galleryNameTextView.setText("Gallery name: "+galleryName);
+        galleryNameTextView.setText("Gallery name: " + galleryName);
 
         registerForContextMenu(gridView);
 
@@ -103,10 +105,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
                 if (adapter.getItem(position).getSelected()) {
                     gridView.getChildAt(position).setBackgroundColor(Color.BLACK);
-                }
-                else{
+                } else {
                     gridView.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
-
                 }
 
 
@@ -129,7 +129,6 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
                 }
 
 
-                //Slika se obrise sa telefona, ali i dalje u gridview-u prikazuje sliku
                 deletePictures(toBeDeleted);
                 picturesTaken.setText("" + (adapter.getCount()));
                 updateSelections();
@@ -138,7 +137,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             }
         });
 
-        if(callingActivity.compareTo(GalleryActivity.THIS_ACTIVITY) == 0) {
+        if (callingActivity.compareTo(GalleryActivity.THIS_ACTIVITY) == 0) {
             savePhotosButton.setVisibility(View.INVISIBLE);
             picturesSaved = true;
         } else {
@@ -151,11 +150,13 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         }
 
         makeVideoButton.setOnClickListener(new View.OnClickListener() {
+            @TargetApi(Build.VERSION_CODES.N)
             @Override
             public void onClick(View v) {
                 picturesSaved = true;
-                final CreateVideoTask task = new CreateVideoTask();
-                task.execute(adapter.getListOfPictures().toArray(new Picture[0]));
+
+                showVideoNameDialog();
+
             }
         });
 
@@ -196,7 +197,6 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                //File fileDirs[] = getExternalFilesDirs(null);
                 File[] files = getExternalFilesDir(null).listFiles();
                 File storageLocationPath =
                         new File(getExternalFilesDir(null).getPath() + "/" + editText.getText().toString());
@@ -211,7 +211,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
                         String newPath = storageLocationPath + "/" + files[i].getName();
                         files[i].renameTo(new File(newPath));
 
-                        if(p != null){
+                        if (p != null) {
                             p.setPath(newPath);
                         }
                     }
@@ -235,6 +235,45 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         builder.show();
     }
 
+    private void showVideoNameDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enter name of the video");
+
+
+        final EditText editText = new EditText(this);
+        editText.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(editText);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+            @TargetApi(24)
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                if (editText.getText().toString().isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Enter name of the video", Toast.LENGTH_SHORT).show();
+                    dialog.cancel();
+                    showVideoNameDialog();
+                } else {
+                    String videoName = editText.getText().toString();
+                    final CreateVideoTask task = new CreateVideoTask(videoName);
+                    task.execute(adapter.getListOfPictures().toArray(new Picture[0]));
+                }
+            }
+
+
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+    }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
@@ -341,6 +380,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
                             files[i].delete();
                         }
                     }
+
                     ReportActivity.super.onBackPressed();
                 }
             });
@@ -362,6 +402,14 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
         public static final String TAG = "SNIMANJE";
         private int totalPictures;
+        private String videoName;
+
+        public CreateVideoTask(String videoName) {
+            this.videoName = videoName;
+        }
+
+        public CreateVideoTask() {
+        }
 
         @Override
         protected Void doInBackground(Picture... pictures) {
@@ -370,7 +418,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
 
             VideoMaker vm = new VideoMaker(getApplicationContext(), pictures);
             try {
-                vm.makeVideo(this);
+                vm.makeVideo(this, videoName);
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -379,7 +428,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         }
 
         public void doPublishProgress(int done) {
-            if(done == 1)
+            if (done == 1)
                 progressBar.setMax(totalPictures);
             publishProgress(done);
         }
@@ -387,7 +436,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         @Override
         protected void onPreExecute() {
             progressBar.setVisibility(View.VISIBLE);
-            progressInfoTextView.setText(0+"% done");
+            progressInfoTextView.setText(0 + "% done");
+            gridView.setEnabled(false);
         }
 
         @Override
@@ -395,13 +445,13 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             int done = values[0];
 
             Log.i(TAG, "Done " + String.valueOf(done) + " of " + totalPictures);
-            int percentage = (int)(((double)done / (double)totalPictures)*100);
-            progressInfoTextView.setText(percentage+"% done");
+            int percentage = (int) (((double) done / (double) totalPictures) * 100);
+            progressInfoTextView.setText(percentage + "% done");
 
             progressBar.setProgress(done);
 
-            if(done == totalPictures)
-            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+            if (done == totalPictures)
+                Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
 
         }
 
@@ -410,6 +460,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             Log.i(TAG, "Finished.");
             progressBar.setVisibility(View.INVISIBLE);
             progressInfoTextView.setVisibility(View.INVISIBLE);
+            gridView.setEnabled(true);
         }
     }
 
