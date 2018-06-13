@@ -476,16 +476,8 @@ public class Camera2BasicFragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         mBtnRecord = view.findViewById(R.id.startRecording);
         mBtnRecord.setBackgroundResource(0);
-        mBtnOpenGallery = view.findViewById(R.id.openGallery);
 
         maxNumberOfPictures = -1;
-
-        mBtnOpenGallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
 
         if(CameraActivity.shootingInterval != -1) this.shootingInterval = CameraActivity.shootingInterval;
 
@@ -503,21 +495,6 @@ public class Camera2BasicFragment extends Fragment
                 files[i].delete();
         }
 
-    }
-
-    private void openGallery() {
-    //Check if gallery folder is empty, if it is don't start activity
-
-        File[] files = getActivity().getApplicationContext().getExternalFilesDir(null).listFiles();
-
-        for(int i=0; i<files.length; i++) {
-            if (files[i].isDirectory() && files[i].getName() != "videos") {
-                Intent intent = new Intent(getActivity(), GalleryActivity.class);
-                startActivity(intent);
-                return;
-            }
-        }
-           showToast("Gallery is empty");
     }
 
     @Override

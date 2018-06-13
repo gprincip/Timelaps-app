@@ -408,6 +408,20 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             this.videoName = videoName;
         }
 
+        private void enableViews(){
+            gridView.setEnabled(true);
+            deleteSelectedItemsButton.setEnabled(true);
+            savePhotosButton.setEnabled(true);
+            makeVideoButton.setEnabled(true);
+        }
+
+        private void disableViews(){
+            gridView.setEnabled(false);
+            deleteSelectedItemsButton.setEnabled(false);
+            savePhotosButton.setEnabled(false);
+            makeVideoButton.setEnabled(false);
+        }
+
         public CreateVideoTask() {
         }
 
@@ -437,7 +451,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
         protected void onPreExecute() {
             progressBar.setVisibility(View.VISIBLE);
             progressInfoTextView.setText(0 + "% done");
-            gridView.setEnabled(false);
+            disableViews();
         }
 
         @Override
@@ -451,7 +465,8 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             progressBar.setProgress(done);
 
             if (done == totalPictures)
-                Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Saved at " +
+                        getExternalFilesDir(null).getPath().toString()+"/"+videoName, Toast.LENGTH_SHORT).show();
 
         }
 
@@ -460,7 +475,7 @@ public class ReportActivity extends AppCompatActivity implements MediaScannerCon
             Log.i(TAG, "Finished.");
             progressBar.setVisibility(View.INVISIBLE);
             progressInfoTextView.setVisibility(View.INVISIBLE);
-            gridView.setEnabled(true);
+            enableViews();
         }
     }
 

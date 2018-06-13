@@ -17,6 +17,7 @@
 package com.example.android.camera2basic;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import java.io.File;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -54,9 +57,17 @@ public class CameraActivity extends AppCompatActivity {
 
         switch(item.getItemId()){
             case R.id.main_menu_settings : openSettingsActivity(); break;
+            case R.id.main_menu_galleries : openGallery(); break;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void openVideosFolder(){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        Uri videosDir = Uri.parse(getExternalFilesDir(null).getPath() + "/videos");
+        intent.setDataAndType(videosDir,"application/*");
+        startActivity(intent);
     }
 
     public void openSettingsActivity(){
@@ -64,5 +75,20 @@ public class CameraActivity extends AppCompatActivity {
         Intent intent = new Intent(this,SettingsActivity.class);
         startActivity(intent);
 
+    }
+
+    private void openGallery() {
+        //Check if gallery folder is empty, if it is don't start activity
+
+        File[] files = getApplicationContext().getExternalFilesDir(null).listFiles();
+
+        for(int i=0; i<files.length; i++) {
+            if (files[i].isDirectory() && files[i].getName() != "videos") {
+                Intent intent = new Intent(this, GalleryActivity.class);
+                startActivity(intent);
+                return;
+            }
+        }
+        Toast.makeText(this,"Gallery is empty",Toast.LENGTH_SHORT).show();
     }
 }

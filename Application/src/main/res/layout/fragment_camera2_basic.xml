@@ -42,13 +42,6 @@
             android:layout_gravity="center"
             android:src="@drawable/icon_record"/>
 
-        <ImageButton
-            android:id="@+id/openGallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|right"
-            android:src="@drawable/icon_gallery"/>
-
     </FrameLayout>
 
     </RelativeLayout>

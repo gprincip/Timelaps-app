@@ -1,17 +1,14 @@
 package com.example.android.camera2basic;
 
 import android.content.Intent;
-import android.graphics.Camera;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
-
-import org.jcodec.containers.mp4.boxes.Edit;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -25,6 +22,22 @@ public class SettingsActivity extends AppCompatActivity {
     boolean intervalSet = false;
     boolean durationSet = false;
 
+    public class rbClickListenerInterval implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            customIntervalEditText.setText("");
+        }
+    }
+
+    public class rbClickListenerDuration implements View.OnClickListener{
+
+        @Override
+        public void onClick(View v) {
+            customDurationEditText.setText("");
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +47,47 @@ public class SettingsActivity extends AppCompatActivity {
         radioGroupVideoDuration = findViewById(R.id.settings_activity_radio_group_videoDuration);
         customIntervalEditText = findViewById(R.id.settings_activity_editText_custom_interval);
         customDurationEditText = findViewById(R.id.settings_activity_editText_custom_duration);
+
+        RadioButton b1sec = findViewById(R.id.settings_activity_radio_button_1sec);
+        RadioButton b1_5sec = findViewById(R.id.settings_activity_radio_button_1_5sec);
+        RadioButton b2sec = findViewById(R.id.settings_activity_radio_button_2sec);
+        RadioButton b3sec = findViewById(R.id.settings_activity_radio_button_3sec);
+        RadioButton b5sec = findViewById(R.id.settings_activity_radio_button_5sec);
+
+        RadioButton b10sec = findViewById(R.id.settings_activity_radio_button_10sec);
+        RadioButton b30sec = findViewById(R.id.settings_activity_radio_button_30sec);
+        RadioButton b1min = findViewById(R.id.settings_activity_radio_button_1min);
+        RadioButton b2min = findViewById(R.id.settings_activity_radio_button_2min);
+        RadioButton bdisabled = findViewById(R.id.settings_activity_radio_button_disabled);
+
+        rbClickListenerInterval cli = new rbClickListenerInterval();
+        rbClickListenerDuration cld = new rbClickListenerDuration();
+
+        b1sec.setOnClickListener(cli);
+        b1_5sec.setOnClickListener(cli);
+        b2sec.setOnClickListener(cli);
+        b3sec.setOnClickListener(cli);
+        b5sec.setOnClickListener(cli);
+
+        b10sec.setOnClickListener(cld);
+        b30sec.setOnClickListener(cld);
+        b1min.setOnClickListener(cld);
+        b2min.setOnClickListener(cld);
+        bdisabled.setOnClickListener(cld);
+
+        customIntervalEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                radioGroupShootingInterval.clearCheck();
+            }
+        });
+
+        customDurationEditText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                radioGroupVideoDuration.clearCheck();
+            }
+        });
 
         if (CameraActivity.shootingInterval != -1) {
 

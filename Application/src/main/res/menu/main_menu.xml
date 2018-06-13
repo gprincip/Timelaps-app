@@ -2,5 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/main_menu_settings" android:title="Settings"></item>
+    <item android:id="@+id/main_menu_galleries" android:title="Gallery"></item>
 
 </menu>
